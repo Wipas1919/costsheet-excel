@@ -79,17 +79,6 @@ def create_cost_sheet_template():
     ws.merge_cells('G5:K5')
     ws.merge_cells('G6:K6')
     ws.merge_cells('G7:K7')
-    
-    # ใส่ข้อความใน G3, G5 และ G7
-    ws['G3'] = "Decoration"
-    
-    # ใส่วันที่ปัจจุบันใน G5
-    from datetime import datetime
-    current_date = datetime.now().strftime("%d/%m/%Y")
-    ws['G5'] = current_date
-    
-    ws['G7'] = "ราคานี้เป็นราคาประเมิณ"
-    
     for r in range(3, 8):
         ws[f'G{r}'].font = font10
         ws[f'G{r}'].alignment = align_left_middle
@@ -241,32 +230,6 @@ def insert_dynamic_data(wb, columns, rows):
     
     rows = processed_rows
     
-    # นำข้อมูลจาก columns ไปใส่ใน template
-    if rows:
-        # นำค่า Project name ไปใส่ B4
-        if 'Project name' in columns:
-            project_name_idx = columns.index('Project name')
-            for row_data in rows:
-                if isinstance(row_data, list) and len(row_data) > project_name_idx and row_data[project_name_idx]:
-                    ws['B4'] = row_data[project_name_idx]
-                    break
-        
-        # นำค่า Show day ไปใส่ B3
-        if 'Show day' in columns:
-            show_day_idx = columns.index('Show day')
-            for row_data in rows:
-                if isinstance(row_data, list) and len(row_data) > show_day_idx and row_data[show_day_idx]:
-                    ws['B3'] = row_data[show_day_idx]
-                    break
-        
-        # นำค่า Place ไปใส่ B5
-        if 'Place' in columns:
-            place_idx = columns.index('Place')
-            for row_data in rows:
-                if isinstance(row_data, list) and len(row_data) > place_idx and row_data[place_idx]:
-                    ws['B5'] = row_data[place_idx]
-                    break
-    
     # เริ่มต้นที่ row 12
     current_row = 12
     
@@ -301,23 +264,9 @@ def insert_dynamic_data(wb, columns, rows):
             continue
         
         # ใส่ชื่อ type ที่ column A
-        type_name = type_mapping[type_code]
-        ws[f'A{current_row}'] = type_name
+        ws[f'A{current_row}'] = type_mapping[type_code]
         ws[f'A{current_row}'].font = Font(name="Calibri", size=10)
-        ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
-        
-        # ถ้าเกิน 15 ตัวอักษร ให้เคาะบรรทัด
-        if len(type_name) > 15:
-            # หาจุดที่เหมาะสมในการเคาะ (หาจากช่องว่างหรือเครื่องหมาย)
-            break_point = 15
-            for i in range(15, 0, -1):
-                if type_name[i] in [' ', '(', '&', '-']:
-                    break_point = i + 1
-                    break
-            
-            # สร้างข้อความที่มีการเคาะบรรทัด
-            wrapped_text = type_name[:break_point] + '\n' + type_name[break_point:]
-            ws[f'A{current_row}'] = wrapped_text
+        ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
         type_start_rows[type_code] = current_row  # เก็บ row ที่เริ่มต้นของ type นี้
         current_row += 1
         

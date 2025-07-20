@@ -301,23 +301,9 @@ def insert_dynamic_data(wb, columns, rows):
             continue
         
         # ใส่ชื่อ type ที่ column A
-        type_name = type_mapping[type_code]
-        ws[f'A{current_row}'] = type_name
+        ws[f'A{current_row}'] = type_mapping[type_code]
         ws[f'A{current_row}'].font = Font(name="Calibri", size=10)
-        ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
-        
-        # ถ้าเกิน 15 ตัวอักษร ให้เคาะบรรทัด
-        if len(type_name) > 15:
-            # หาจุดที่เหมาะสมในการเคาะ (หาจากช่องว่างหรือเครื่องหมาย)
-            break_point = 15
-            for i in range(15, 0, -1):
-                if type_name[i] in [' ', '(', '&', '-']:
-                    break_point = i + 1
-                    break
-            
-            # สร้างข้อความที่มีการเคาะบรรทัด
-            wrapped_text = type_name[:break_point] + '\n' + type_name[break_point:]
-            ws[f'A{current_row}'] = wrapped_text
+        ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
         type_start_rows[type_code] = current_row  # เก็บ row ที่เริ่มต้นของ type นี้
         current_row += 1
         

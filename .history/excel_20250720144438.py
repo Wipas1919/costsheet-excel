@@ -306,11 +306,11 @@ def insert_dynamic_data(wb, columns, rows):
         ws[f'A{current_row}'].font = Font(name="Calibri", size=10)
         ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
         
-        # ถ้าเกิน 15 ตัวอักษร ให้เคาะบรรทัด
-        if len(type_name) > 15:
+        # ถ้าเกิน 16 ตัวอักษร ให้เคาะบรรทัด
+        if len(type_name) > 16:
             # หาจุดที่เหมาะสมในการเคาะ (หาจากช่องว่างหรือเครื่องหมาย)
-            break_point = 15
-            for i in range(15, 0, -1):
+            break_point = 16
+            for i in range(16, 0, -1):
                 if type_name[i] in [' ', '(', '&', '-']:
                     break_point = i + 1
                     break

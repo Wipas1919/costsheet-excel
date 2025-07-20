@@ -79,17 +79,6 @@ def create_cost_sheet_template():
     ws.merge_cells('G5:K5')
     ws.merge_cells('G6:K6')
     ws.merge_cells('G7:K7')
-    
-    # ใส่ข้อความใน G3, G5 และ G7
-    ws['G3'] = "Decoration"
-    
-    # ใส่วันที่ปัจจุบันใน G5
-    from datetime import datetime
-    current_date = datetime.now().strftime("%d/%m/%Y")
-    ws['G5'] = current_date
-    
-    ws['G7'] = "ราคานี้เป็นราคาประเมิณ"
-    
     for r in range(3, 8):
         ws[f'G{r}'].font = font10
         ws[f'G{r}'].alignment = align_left_middle
@@ -142,9 +131,6 @@ def create_cost_sheet_template():
     for col in range(2, 12):
         cell = ws.cell(row=8, column=col)
         cell.border = border
-    
-    # ใส่ All Borders ที่ A8
-    ws['A8'].border = border
 
     # A11:K11 - Table headers
     headers = [
@@ -177,12 +163,8 @@ def create_cost_sheet_template():
     ws.column_dimensions['C'].width = 28
     for col in ['D', 'E', 'F']:
         ws.column_dimensions[col].width = 6
-    for col in ['G', 'H']:
+    for col in ['G', 'H', 'I', 'J', 'K']:
         ws.column_dimensions[col].width = 8
-    # ขยาย column I, J ให้มี width = 9
-    ws.column_dimensions['I'].width = 9
-    ws.column_dimensions['J'].width = 9
-    ws.column_dimensions['K'].width = 8
     
     return wb
 
@@ -241,32 +223,6 @@ def insert_dynamic_data(wb, columns, rows):
     
     rows = processed_rows
     
-    # นำข้อมูลจาก columns ไปใส่ใน template
-    if rows:
-        # นำค่า Project name ไปใส่ B4
-        if 'Project name' in columns:
-            project_name_idx = columns.index('Project name')
-            for row_data in rows:
-                if isinstance(row_data, list) and len(row_data) > project_name_idx and row_data[project_name_idx]:
-                    ws['B4'] = row_data[project_name_idx]
-                    break
-        
-        # นำค่า Show day ไปใส่ B3
-        if 'Show day' in columns:
-            show_day_idx = columns.index('Show day')
-            for row_data in rows:
-                if isinstance(row_data, list) and len(row_data) > show_day_idx and row_data[show_day_idx]:
-                    ws['B3'] = row_data[show_day_idx]
-                    break
-        
-        # นำค่า Place ไปใส่ B5
-        if 'Place' in columns:
-            place_idx = columns.index('Place')
-            for row_data in rows:
-                if isinstance(row_data, list) and len(row_data) > place_idx and row_data[place_idx]:
-                    ws['B5'] = row_data[place_idx]
-                    break
-    
     # เริ่มต้นที่ row 12
     current_row = 12
     
@@ -301,23 +257,9 @@ def insert_dynamic_data(wb, columns, rows):
             continue
         
         # ใส่ชื่อ type ที่ column A
-        type_name = type_mapping[type_code]
-        ws[f'A{current_row}'] = type_name
+        ws[f'A{current_row}'] = type_mapping[type_code]
         ws[f'A{current_row}'].font = Font(name="Calibri", size=10)
-        ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
-        
-        # ถ้าเกิน 15 ตัวอักษร ให้เคาะบรรทัด
-        if len(type_name) > 15:
-            # หาจุดที่เหมาะสมในการเคาะ (หาจากช่องว่างหรือเครื่องหมาย)
-            break_point = 15
-            for i in range(15, 0, -1):
-                if type_name[i] in [' ', '(', '&', '-']:
-                    break_point = i + 1
-                    break
-            
-            # สร้างข้อความที่มีการเคาะบรรทัด
-            wrapped_text = type_name[:break_point] + '\n' + type_name[break_point:]
-            ws[f'A{current_row}'] = wrapped_text
+        ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
         type_start_rows[type_code] = current_row  # เก็บ row ที่เริ่มต้นของ type นี้
         current_row += 1
         
@@ -388,7 +330,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if l_idx < len(row_data):
                         ws[f'E{current_row}'] = row_data[l_idx]
                         ws[f'E{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'E{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
+                        ws[f'E{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 # ใส่ข้อมูล H ใน column F
                 if 'H' in columns:
@@ -396,7 +338,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if h_idx < len(row_data):
                         ws[f'F{current_row}'] = row_data[h_idx]
                         ws[f'F{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'F{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
+                        ws[f'F{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 # ใส่ข้อมูล Quantity ใน column G
                 if 'Quantity' in columns:
@@ -404,7 +346,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if qty_idx < len(row_data):
                         ws[f'G{current_row}'] = row_data[qty_idx]
                         ws[f'G{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'G{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
+                        ws[f'G{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 # ใส่ข้อมูล Unit ใน column H
                 if 'Unit' in columns:
@@ -412,7 +354,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if unit_idx < len(row_data):
                         ws[f'H{current_row}'] = row_data[unit_idx]
                         ws[f'H{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'H{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
+                        ws[f'H{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 # ใส่ข้อมูล price_per_unit ใน column I
                 if 'price_per_unit' in columns:
@@ -420,13 +362,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if price_idx < len(row_data):
                         ws[f'I{current_row}'] = row_data[price_idx]
                         ws[f'I{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'I{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
-                        # ใส่ comma style สำหรับ Unit Price
-                        try:
-                            if row_data[price_idx]:
-                                ws[f'I{current_row}'].number_format = '#,##0.00'
-                        except:
-                            pass
+                        ws[f'I{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 # ใส่ข้อมูล total_cost ใน column J
                 if 'total_cost' in columns:
@@ -434,13 +370,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if total_idx < len(row_data):
                         ws[f'J{current_row}'] = row_data[total_idx]
                         ws[f'J{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'J{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
-                        # ใส่ comma style สำหรับ Amounts
-                        try:
-                            if row_data[total_idx]:
-                                ws[f'J{current_row}'].number_format = '#,##0.00'
-                        except:
-                            pass
+                        ws[f'J{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 # ใส่ข้อมูล remark ใน column K
                 if 'remark' in columns:
@@ -448,7 +378,7 @@ def insert_dynamic_data(wb, columns, rows):
                     if remark_idx < len(row_data):
                         ws[f'K{current_row}'] = row_data[remark_idx]
                         ws[f'K{current_row}'].font = Font(name="Calibri", size=10)
-                        ws[f'K{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
+                        ws[f'K{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
                 current_row += 1
         
@@ -484,15 +414,7 @@ def insert_dynamic_data(wb, columns, rows):
         # ใส่ผลรวมที่ column J
         ws[f'J{current_row}'] = total_amount
         ws[f'J{current_row}'].font = Font(name="Calibri", size=10)
-        ws[f'J{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
-        # ใส่ comma style สำหรับ TOTAL Amounts
-        ws[f'J{current_row}'].number_format = '#,##0.00'
-        
-        # ใส่ background สี #808080 ให้กับ column B:J ในแถว TOTAL
-        gray_fill = PatternFill(fill_type="solid", start_color="808080", end_color="808080")
-        for col in range(2, 11):  # B=2, J=10
-            cell = ws.cell(row=current_row, column=col)
-            cell.fill = gray_fill
+        ws[f'J{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
         
         total_rows.append(current_row)  # เก็บ row ของ TOTAL
         current_row += 1
@@ -501,8 +423,6 @@ def insert_dynamic_data(wb, columns, rows):
     ws['B8'] = grand_total
     ws['B8'].font = Font(name="Calibri", size=10, color="000000")  # black color
     ws['B8'].alignment = Alignment(horizontal='center', vertical='center')
-    # ใส่ comma style สำหรับ Grand Total
-    ws['B8'].number_format = '#,##0.00'
     
     # เพิ่ม borders แบบในรูป - เส้นตั้งตาม column และเส้นแนวนอนปิดท้าย total
     thin = Side(border_style="thin", color="000000")
