@@ -577,9 +577,11 @@ def insert_dynamic_data(wb, columns, rows):
         )
 
 def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
-    # Configure your MinIO endpoints here
-    minio_internal_endpoint = "YOUR_INTERNAL_MINIO_ENDPOINT"
-    minio_public_endpoint = "YOUR_PUBLIC_MINIO_ENDPOINT"
+    # Within Docker network - use container name
+    minio_internal_endpoint = "http://minio:9000"
+
+    # For creating Public Presigned URL - use Host IP + port
+    minio_public_endpoint = "http://100.81.135.35:9009"
 
     now = datetime.now().strftime("%Y%m%d-%H%M%S")
     file_name = f"CostSheet-{now}.xlsx"
@@ -602,7 +604,7 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
     config = botocore.config.Config(connect_timeout=30, read_timeout=60)
     s3 = boto3.client(
         "s3",
-        endpoint_url=minio_internal_endpoint,
+        endpoint_url=minio_internal_endpoint,  # Use internal network endpoint for file upload
         aws_access_key_id=minio_access_key,
         aws_secret_access_key=minio_secret_key,
         config=config
@@ -620,7 +622,7 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
     # 5. Create public Presigned URL for others to download
     public_s3 = boto3.client(
         "s3",
-        endpoint_url=minio_public_endpoint,
+        endpoint_url=minio_public_endpoint,   # Use Host endpoint to create Public URL
         aws_access_key_id=minio_access_key,
         aws_secret_access_key=minio_secret_key,
         config=config
@@ -636,15 +638,15 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
 
 # Usage example
 if __name__ == "__main__":
-    # Sample data for demonstration
+    # Sample data for Cost Sheet
     columns = ["list_id", "Project name", "Show day", "Place", "type", "Component", "Description", "W", "L", "H", "Unit", "Quantity", "price_per_unit", "total_cost", "remark"]
     rows = [
-        ["10001", "Sample Project", "2024-01-15", "Sample Location", "Structure", "Flooring", "Sample Material", "10", "5", "0.1", "m2", "50", "100", "5000", "Sample remark"],
-        ["10002", "Sample Project", "2024-01-15", "Sample Location", "Structure", "Main structure", "Sample Wall", "3", "2", "2.5", "m2", "6", "200", "1200", "Sample remark"],
-        ["10101", "Sample Project", "2024-01-15", "Sample Location", "Furniture", "Chair", "Sample Chair", "0.5", "0.5", "1", "pcs", "10", "500", "5000", "Sample remark"],
-        ["10201", "Sample Project", "2024-01-15", "Sample Location", "Graphic", "Banner", "Sample Banner", "2", "1", "0.1", "m2", "2", "150", "300", "Sample remark"]
+        ["10001", "Project A", "2024-01-15", "Bangkok", "Structure", "Flooring", "Carpet", "10", "5", "0.1", "m2", "50", "100", "5000", "High quality"],
+        ["10002", "Project A", "2024-01-15", "Bangkok", "Structure", "Main structure", "Wall", "3", "2", "2.5", "m2", "6", "200", "1200", "Standard"],
+        ["10101", "Project A", "2024-01-15", "Bangkok", "Furniture", "Chair", "Office chair", "0.5", "0.5", "1", "pcs", "10", "500", "5000", "Ergonomic"],
+        ["10201", "Project A", "2024-01-15", "Bangkok", "Graphic", "Banner", "Vinyl banner", "2", "1", "0.1", "m2", "2", "150", "300", "UV resistant"]
     ]
     
-    # Call function with your credentials
+    # Call function (use real credentials)
     # result = main(columns, rows, "your_access_key", "your_secret_key", "your_bucket")
     # print(result)

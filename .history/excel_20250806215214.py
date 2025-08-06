@@ -8,13 +8,13 @@ from datetime import datetime
 import time
 
 def create_cost_sheet_template():
-    """Create Excel template for Cost Sheet"""
+    """Create Excel template for Cost Sheet with professional formatting"""
     wb = openpyxl.Workbook()
     ws = wb.active
     if ws is None:
         raise ValueError("Failed to create worksheet")
     
-    # A1:K1 - Cost Sheet
+    # A1:K1 - Cost Sheet Header
     ws.merge_cells('A1:K1')
     ws['A1'] = "Cost Sheet"
     ws.row_dimensions[1].height = 30
@@ -23,7 +23,7 @@ def create_cost_sheet_template():
     alignment_a1 = Alignment(horizontal='left', vertical='center')
     ws['A1'].alignment = alignment_a1
     
-    # A2 - Exhibition Booth
+    # A2 - Exhibition Booth Subtitle
     ws['A2'] = "Exhibition Booth"
     font_a2 = Font(name="Calibri", size=12, color="00AEAAAA")
     ws['A2'].font = font_a2
@@ -36,7 +36,7 @@ def create_cost_sheet_template():
     align_left_middle = Alignment(horizontal='left', vertical='center')
     row_height = 12
     
-    # A3-A7
+    # A3-A7 - Project Information Labels
     ws['A3'] = "date"
     ws['A4'] = "Project name"
     ws['A5'] = "Place"
@@ -47,7 +47,7 @@ def create_cost_sheet_template():
         ws[f'A{r}'].alignment = align_left_middle
         ws.row_dimensions[r].height = row_height
     
-    # D3:F7
+    # D3:F7 - Section Headers
     ws.merge_cells('D3:F3')
     ws['D3'] = "Booth"
     ws.merge_cells('D4:F4')
@@ -63,7 +63,7 @@ def create_cost_sheet_template():
         ws[f'D{r}'].alignment = align_left_middle
         ws.row_dimensions[r].height = row_height
     
-    # Merge B3:C3, B4:C4, B5:C5, B6:C6, B7:C7
+    # Merge B3:C3, B4:C4, B5:C5, B6:C6, B7:C7 - Data Cells
     ws.merge_cells('B3:C3')
     ws.merge_cells('B4:C4')
     ws.merge_cells('B5:C5')
@@ -73,17 +73,17 @@ def create_cost_sheet_template():
         ws[f'B{r}'].font = font10
         ws[f'B{r}'].alignment = align_left_middle
     
-    # Merge G3:K3, G4:K4, G5:K5, G6:K6, G7:K7
+    # Merge G3:K3, G4:K4, G5:K5, G6:K6, G7:K7 - Additional Data Cells
     ws.merge_cells('G3:K3')
     ws.merge_cells('G4:K4')
     ws.merge_cells('G5:K5')
     ws.merge_cells('G6:K6')
     ws.merge_cells('G7:K7')
     
-    # Set text in G3, G5 and G7
+    # Set default values for specific cells
     ws['G3'] = "Decoration"
     
-    # Set current date in G5
+    # Insert current date in G5
     current_date = datetime.now().strftime("%d/%m/%Y")
     ws['G5'] = current_date
     
@@ -93,7 +93,7 @@ def create_cost_sheet_template():
         ws[f'G{r}'].font = font10
         ws[f'G{r}'].alignment = align_left_middle
     
-    # Add section headers
+    # Add section headers (empty for now)
     section_headers = []
     font_section = Font(name="Calibri", size=10)
     align_left_middle = Alignment(horizontal='left', vertical='center')
@@ -102,7 +102,7 @@ def create_cost_sheet_template():
         ws[f'A{row}'].font = font_section
         ws[f'A{row}'].alignment = align_left_middle
     
-    # Add B column section items
+    # Add B column section items (empty for now)
     b_items = []
     font_b = Font(name="Calibri", size=10)
     align_left_middle = Alignment(horizontal='left', vertical='center')
@@ -119,7 +119,7 @@ def create_cost_sheet_template():
             cell = ws.cell(row=row, column=col)
             cell.border = border
     
-    # A8 - Total cost
+    # A8 - Total cost header
     ws['A8'] = "Total cost"
     ws.row_dimensions[8].height = 12
     font_a8 = Font(name="Calibri", size=10, color="00FFFFFF")
@@ -186,7 +186,7 @@ def create_cost_sheet_template():
     return wb
 
 def insert_dynamic_data(wb, columns, rows):
-    """Insert dynamic data into template according to specified logic"""
+    """Insert dynamic data into the template based on specified logic"""
     ws = wb.active
     
     # Define type mapping
@@ -217,7 +217,7 @@ def insert_dynamic_data(wb, columns, rows):
         print("Warning: 'list_id' column not found")
         return
     
-    # Check if rows is list of lists or list of dictionaries
+    # Validate rows data
     if not rows:
         print("Warning: No data in rows")
         return
@@ -226,13 +226,13 @@ def insert_dynamic_data(wb, columns, rows):
     processed_rows = []
     for row in rows:
         if isinstance(row, dict):
-            # If it's a dictionary, convert to list according to column order
+            # Convert dictionary to list based on column order
             row_list = []
             for col in columns:
                 row_list.append(row.get(col, ""))
             processed_rows.append(row_list)
         elif isinstance(row, list):
-            # If it's already a list, use it directly
+            # If already a list, use as is
             processed_rows.append(row)
         else:
             print(f"Warning: Skipping invalid row format: {type(row)}")
@@ -240,7 +240,7 @@ def insert_dynamic_data(wb, columns, rows):
     
     rows = processed_rows
     
-    # Insert data from columns into template
+    # Insert fixed position data from columns
     if rows:
         # Insert Project name into B4
         if 'Project name' in columns:
@@ -269,15 +269,15 @@ def insert_dynamic_data(wb, columns, rows):
     # Start at row 12
     current_row = 12
     
-    # Store data for calculating grand total
+    # Data for calculating grand total
     grand_total = 0
-    type_start_rows = {}  # Store starting row of each type
+    type_start_rows = {}  # Store starting row for each type
     total_rows = []  # Store TOTAL rows
     
     # Group data by type
     data_by_type = {}
     for row_data in rows:
-        # Check row_data length and list_id_index
+        # Validate row_data length and list_id_index
         if not isinstance(row_data, list) or len(row_data) <= list_id_index:
             print(f"Warning: Skipping row with insufficient data: {row_data}")
             continue
@@ -305,7 +305,7 @@ def insert_dynamic_data(wb, columns, rows):
         ws[f'A{current_row}'].font = Font(name="Calibri", size=10)
         ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
         
-        # If exceeds 15 characters, wrap to new line
+        # Text wrapping if longer than 15 characters
         if len(type_name) > 15:
             # Find suitable break point (space, parentheses, ampersand, hyphen)
             break_point = 15
@@ -314,16 +314,16 @@ def insert_dynamic_data(wb, columns, rows):
                     break_point = i + 1
                     break
             
-            # Create text with line break
+            # Create wrapped text
             wrapped_text = type_name[:break_point] + '\n' + type_name[break_point:]
             ws[f'A{current_row}'] = wrapped_text
-        type_start_rows[type_code] = current_row  # Store starting row of this type
+        type_start_rows[type_code] = current_row  # Store starting row for this type
         current_row += 1
         
         # Group data by component
         data_by_component = {}
         for row_data in data_by_type[type_code]:
-            # Check row_data length and list_id_index
+            # Validate row_data length and list_id_index
             if not isinstance(row_data, list) or len(row_data) <= list_id_index:
                 continue
                 
@@ -339,20 +339,20 @@ def insert_dynamic_data(wb, columns, rows):
                 else:
                     print(f"Debug: component_code {component_code} not found in mapping")
         
-        # Loop through components in order and insert in column B next row after Type
+        # Loop through components in order and insert in column B
         for component_code in component_order:
             if component_code not in data_by_component or not data_by_component[component_code]:
                 continue
             
-            # Insert component group name in column B next row after Type
+            # Insert component group name in column B
             ws[f'B{current_row}'] = component_mapping[component_code]
             ws[f'B{current_row}'].font = Font(name="Calibri", size=10)
             ws[f'B{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
             current_row += 1
         
-        # If no matching component found, display all data
+        # If no matching components, display all data
         if not any(component_code in data_by_component for component_code in component_order):
-            # Insert all data in this type
+            # Insert all data for this type
             for row_data in data_by_type[type_code]:
                 if not isinstance(row_data, list):
                     continue
@@ -455,7 +455,7 @@ def insert_dynamic_data(wb, columns, rows):
         total_amount = 0
         print(f"Debug: Calculating total for type {type_code}")
         for row_data in data_by_type[type_code]:
-            # Check row_data length
+            # Validate row_data length
             if not isinstance(row_data, list):
                 continue
                 
@@ -487,7 +487,7 @@ def insert_dynamic_data(wb, columns, rows):
         # Add comma style for TOTAL Amounts
         ws[f'J{current_row}'].number_format = '#,##0.00'
         
-        # Add background color #808080 to columns B:J in TOTAL row
+        # Add gray background to columns B:J in TOTAL row
         gray_fill = PatternFill(fill_type="solid", start_color="808080", end_color="808080")
         for col in range(2, 11):  # B=2, J=10
             cell = ws.cell(row=current_row, column=col)
@@ -503,7 +503,7 @@ def insert_dynamic_data(wb, columns, rows):
     # Add comma style for Grand Total
     ws['B8'].number_format = '#,##0.00'
     
-    # Add borders as in the image - vertical lines by column and horizontal lines at end of total
+    # Add borders - vertical lines between columns and horizontal lines at type boundaries
     thin = Side(border_style="thin", color="000000")
     
     for type_code in type_order:
@@ -518,7 +518,7 @@ def insert_dynamic_data(wb, columns, rows):
                 if check_type in type_start_rows:
                     end_row = type_start_rows[check_type] - 2  # row before next type
             
-            # Add borders as in image
+            # Add borders as specified
             for row in range(start_row, end_row + 1):
                 # Top row of type - top and vertical lines
                 if row == start_row:
@@ -542,7 +542,7 @@ def insert_dynamic_data(wb, columns, rows):
                         else:  # Column B-J
                             cell.border = Border(right=thin, bottom=thin)
                 
-                # Middle rows - only vertical lines
+                # Middle rows - vertical lines only
                 else:
                     for col in range(1, 12):  # A to K
                         cell = ws.cell(row=row, column=col)
@@ -565,7 +565,7 @@ def insert_dynamic_data(wb, columns, rows):
                 bottom=thin
             )
     
-    # Add All borders to A11:K11 (table headers) - add at the end to ensure visibility
+    # Add All borders to A11:K11 (table headers) - apply last to ensure visibility
     for col in range(1, 12):  # A to K
         cell = ws.cell(row=11, column=col)
         # Add All borders (top, left, right, bottom)
@@ -577,38 +577,51 @@ def insert_dynamic_data(wb, columns, rows):
         )
 
 def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
-    # Configure your MinIO endpoints here
-    minio_internal_endpoint = "YOUR_INTERNAL_MINIO_ENDPOINT"
-    minio_public_endpoint = "YOUR_PUBLIC_MINIO_ENDPOINT"
+    """
+    Main function to create Excel cost sheet and upload to MinIO
+    
+    Args:
+        columns (list): Column headers
+        rows (list): Data rows
+        minio_access_key (str): MinIO access key
+        minio_secret_key (str): MinIO secret key
+        bucket_name (str): MinIO bucket name
+    
+    Returns:
+        dict: Contains file_url for downloading the Excel file
+    """
+    # Internal Docker network endpoint
+    minio_internal_endpoint = "http://minio:9000"
+
+    # Public endpoint for generating presigned URLs
+    minio_public_endpoint = "http://100.81.135.35:9009"
 
     now = datetime.now().strftime("%Y%m%d-%H%M%S")
     file_name = f"CostSheet-{now}.xlsx"
     object_key = f"excel-sheet/{file_name}"
 
-    # 1. Create Excel template
+    # Create Excel template
     wb = create_cost_sheet_template()
     
-    # 2. Add dynamic data
+    # Insert dynamic data
     insert_dynamic_data(wb, columns, rows)
     
-    object_key = f"excel-sheet/{file_name}"
-
-    # 2. Save file in memory
+    # Save file to memory
     excel_buffer = BytesIO()
     wb.save(excel_buffer)
     excel_buffer.seek(0)
 
-    # 3. Connect to MinIO
+    # Connect to MinIO
     config = botocore.config.Config(connect_timeout=30, read_timeout=60)
     s3 = boto3.client(
         "s3",
-        endpoint_url=minio_internal_endpoint,
+        endpoint_url=minio_internal_endpoint,  # Use internal network endpoint for upload
         aws_access_key_id=minio_access_key,
         aws_secret_access_key=minio_secret_key,
         config=config
     )
 
-    # 4. Upload file
+    # Upload file
     excel_buffer.seek(0)
     s3.upload_fileobj(
         excel_buffer,
@@ -617,10 +630,10 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
         ExtraArgs={"ContentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
     )
 
-    # 5. Create public Presigned URL for others to download
+    # Generate public presigned URL for download
     public_s3 = boto3.client(
         "s3",
-        endpoint_url=minio_public_endpoint,
+        endpoint_url=minio_public_endpoint,   # Use host endpoint for public URL generation
         aws_access_key_id=minio_access_key,
         aws_secret_access_key=minio_secret_key,
         config=config
@@ -634,17 +647,17 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
 
     return {"file_url": presigned_url}
 
-# Usage example
+# Example usage
 if __name__ == "__main__":
-    # Sample data for demonstration
+    # Sample data for Cost Sheet
     columns = ["list_id", "Project name", "Show day", "Place", "type", "Component", "Description", "W", "L", "H", "Unit", "Quantity", "price_per_unit", "total_cost", "remark"]
     rows = [
-        ["10001", "Sample Project", "2024-01-15", "Sample Location", "Structure", "Flooring", "Sample Material", "10", "5", "0.1", "m2", "50", "100", "5000", "Sample remark"],
-        ["10002", "Sample Project", "2024-01-15", "Sample Location", "Structure", "Main structure", "Sample Wall", "3", "2", "2.5", "m2", "6", "200", "1200", "Sample remark"],
-        ["10101", "Sample Project", "2024-01-15", "Sample Location", "Furniture", "Chair", "Sample Chair", "0.5", "0.5", "1", "pcs", "10", "500", "5000", "Sample remark"],
-        ["10201", "Sample Project", "2024-01-15", "Sample Location", "Graphic", "Banner", "Sample Banner", "2", "1", "0.1", "m2", "2", "150", "300", "Sample remark"]
+        ["10001", "Project A", "2024-01-15", "Bangkok", "Structure", "Flooring", "Carpet", "10", "5", "0.1", "m2", "50", "100", "5000", "High quality"],
+        ["10002", "Project A", "2024-01-15", "Bangkok", "Structure", "Main structure", "Wall", "3", "2", "2.5", "m2", "6", "200", "1200", "Standard"],
+        ["10101", "Project A", "2024-01-15", "Bangkok", "Furniture", "Chair", "Office chair", "0.5", "0.5", "1", "pcs", "10", "500", "5000", "Ergonomic"],
+        ["10201", "Project A", "2024-01-15", "Bangkok", "Graphic", "Banner", "Vinyl banner", "2", "1", "0.1", "m2", "2", "150", "300", "UV resistant"]
     ]
     
-    # Call function with your credentials
+    # Call function (use real credentials)
     # result = main(columns, rows, "your_access_key", "your_secret_key", "your_bucket")
     # print(result)

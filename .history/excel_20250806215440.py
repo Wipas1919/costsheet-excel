@@ -8,7 +8,7 @@ from datetime import datetime
 import time
 
 def create_cost_sheet_template():
-    """Create Excel template for Cost Sheet"""
+    """สร้าง Excel template สำหรับ Cost Sheet"""
     wb = openpyxl.Workbook()
     ws = wb.active
     if ws is None:
@@ -80,14 +80,15 @@ def create_cost_sheet_template():
     ws.merge_cells('G6:K6')
     ws.merge_cells('G7:K7')
     
-    # Set text in G3, G5 and G7
+    # ใส่ข้อความใน G3, G5 และ G7
     ws['G3'] = "Decoration"
     
-    # Set current date in G5
+    # ใส่วันที่ปัจจุบันใน G5
+    from datetime import datetime
     current_date = datetime.now().strftime("%d/%m/%Y")
     ws['G5'] = current_date
     
-    ws['G7'] = "This price is an estimate"
+    ws['G7'] = "ราคานี้เป็นราคาประเมิณ"
     
     for r in range(3, 8):
         ws[f'G{r}'].font = font10
@@ -142,7 +143,7 @@ def create_cost_sheet_template():
         cell = ws.cell(row=8, column=col)
         cell.border = border
     
-    # Add All Borders to A8
+    # ใส่ All Borders ที่ A8
     ws['A8'].border = border
 
     # A11:K11 - Table headers
@@ -153,7 +154,7 @@ def create_cost_sheet_template():
         ("D11", "W"),
         ("E11", "L"),
         ("F11", "H"),
-        ("G11", "quantity"),
+        ("G11", "quanity"),
         ("H11", "Unit"),
         ("I11", "Unit Price"),
         ("J11", "Amounts"),
@@ -170,7 +171,7 @@ def create_cost_sheet_template():
         col = idx + 1
         ws.cell(row=11, column=col).border = border
     
-    # Set column widths
+    # กำหนดความกว้างของคอลัมน์
     ws.column_dimensions['A'].width = 15
     ws.column_dimensions['B'].width = 22
     ws.column_dimensions['C'].width = 28
@@ -178,7 +179,7 @@ def create_cost_sheet_template():
         ws.column_dimensions[col].width = 6
     for col in ['G', 'H']:
         ws.column_dimensions[col].width = 8
-    # Expand columns I, J to width = 9
+    # ขยาย column I, J ให้มี width = 9
     ws.column_dimensions['I'].width = 9
     ws.column_dimensions['J'].width = 9
     ws.column_dimensions['K'].width = 8
@@ -186,10 +187,10 @@ def create_cost_sheet_template():
     return wb
 
 def insert_dynamic_data(wb, columns, rows):
-    """Insert dynamic data into template according to specified logic"""
+    """เพิ่มข้อมูลแบบ dynamic ลงใน template ตาม logic ที่กำหนด"""
     ws = wb.active
     
-    # Define type mapping
+    # กำหนด type mapping
     type_mapping = {
         '100': 'Structure',
         '101': 'Furniture&plant (For rent & buy out)',
@@ -197,19 +198,19 @@ def insert_dynamic_data(wb, columns, rows):
         '103': 'Electrical'
     }
     
-    # Define component group mapping
+    # กำหนด component group mapping
     component_mapping = {
         '01': 'Flooring',
         '02': 'Main structure & decoration'
     }
     
-    # Type display order
+    # ลำดับการแสดงผล type
     type_order = ['100', '101', '102', '103']
     
-    # Component display order
+    # ลำดับการแสดงผล component
     component_order = ['01', '02']
     
-    # Find important column indices
+    # หา index ของ columns ที่สำคัญ
     list_id_index = columns.index('list_id') if 'list_id' in columns else None
     amounts_index = 9  # column J (index 9)
     
@@ -217,22 +218,22 @@ def insert_dynamic_data(wb, columns, rows):
         print("Warning: 'list_id' column not found")
         return
     
-    # Check if rows is list of lists or list of dictionaries
+    # ตรวจสอบว่า rows เป็น list of lists หรือ list of dictionaries
     if not rows:
         print("Warning: No data in rows")
         return
     
-    # Convert rows to list of lists if it's list of dictionaries
+    # แปลง rows เป็น list of lists ถ้าเป็น list of dictionaries
     processed_rows = []
     for row in rows:
         if isinstance(row, dict):
-            # If it's a dictionary, convert to list according to column order
+            # ถ้าเป็น dictionary ให้แปลงเป็น list ตามลำดับ columns
             row_list = []
             for col in columns:
                 row_list.append(row.get(col, ""))
             processed_rows.append(row_list)
         elif isinstance(row, list):
-            # If it's already a list, use it directly
+            # ถ้าเป็น list อยู่แล้ว ให้ใช้เลย
             processed_rows.append(row)
         else:
             print(f"Warning: Skipping invalid row format: {type(row)}")
@@ -240,9 +241,9 @@ def insert_dynamic_data(wb, columns, rows):
     
     rows = processed_rows
     
-    # Insert data from columns into template
+    # นำข้อมูลจาก columns ไปใส่ใน template
     if rows:
-        # Insert Project name into B4
+        # นำค่า Project name ไปใส่ B4
         if 'Project name' in columns:
             project_name_idx = columns.index('Project name')
             for row_data in rows:
@@ -250,7 +251,7 @@ def insert_dynamic_data(wb, columns, rows):
                     ws['B4'] = row_data[project_name_idx]
                     break
         
-        # Insert Show day into B3
+        # นำค่า Show day ไปใส่ B3
         if 'Show day' in columns:
             show_day_idx = columns.index('Show day')
             for row_data in rows:
@@ -258,7 +259,7 @@ def insert_dynamic_data(wb, columns, rows):
                     ws['B3'] = row_data[show_day_idx]
                     break
         
-        # Insert Place into B5
+        # นำค่า Place ไปใส่ B5
         if 'Place' in columns:
             place_idx = columns.index('Place')
             for row_data in rows:
@@ -266,98 +267,98 @@ def insert_dynamic_data(wb, columns, rows):
                     ws['B5'] = row_data[place_idx]
                     break
     
-    # Start at row 12
+    # เริ่มต้นที่ row 12
     current_row = 12
     
-    # Store data for calculating grand total
+    # เก็บข้อมูลสำหรับคำนวณผลรวมทั้งหมด
     grand_total = 0
-    type_start_rows = {}  # Store starting row of each type
-    total_rows = []  # Store TOTAL rows
+    type_start_rows = {}  # เก็บ row ที่เริ่มต้นของแต่ละ type
+    total_rows = []  # เก็บ row ของ TOTAL
     
-    # Group data by type
+    # จัดกลุ่มข้อมูลตาม type
     data_by_type = {}
     for row_data in rows:
-        # Check row_data length and list_id_index
+        # ตรวจสอบความยาวของ row_data และ list_id_index
         if not isinstance(row_data, list) or len(row_data) <= list_id_index:
             print(f"Warning: Skipping row with insufficient data: {row_data}")
             continue
             
         list_id = str(row_data[list_id_index])
-        print(f"Debug: list_id = {list_id}")
+        print(f"Debug: list_id = {list_id}")  # Debug line
         if len(list_id) >= 3:
             type_code = list_id[:3]
-            print(f"Debug: type_code = {type_code}")
+            print(f"Debug: type_code = {type_code}")  # Debug line
             if type_code in type_mapping:
                 if type_code not in data_by_type:
                     data_by_type[type_code] = []
                 data_by_type[type_code].append(row_data)
             else:
-                print(f"Debug: type_code {type_code} not found in mapping")
+                print(f"Debug: type_code {type_code} not found in mapping")  # Debug line
     
-    # Loop through types in order
+    # วนลูปตามลำดับ type
     for type_code in type_order:
         if type_code not in data_by_type or not data_by_type[type_code]:
             continue
         
-        # Insert type name in column A
+        # ใส่ชื่อ type ที่ column A
         type_name = type_mapping[type_code]
         ws[f'A{current_row}'] = type_name
         ws[f'A{current_row}'].font = Font(name="Calibri", size=10)
         ws[f'A{current_row}'].alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
         
-        # If exceeds 15 characters, wrap to new line
+        # ถ้าเกิน 15 ตัวอักษร ให้เคาะบรรทัด
         if len(type_name) > 15:
-            # Find suitable break point (space, parentheses, ampersand, hyphen)
+            # หาจุดที่เหมาะสมในการเคาะ (หาจากช่องว่างหรือเครื่องหมาย)
             break_point = 15
             for i in range(15, 0, -1):
                 if type_name[i] in [' ', '(', '&', '-']:
                     break_point = i + 1
                     break
             
-            # Create text with line break
+            # สร้างข้อความที่มีการเคาะบรรทัด
             wrapped_text = type_name[:break_point] + '\n' + type_name[break_point:]
             ws[f'A{current_row}'] = wrapped_text
-        type_start_rows[type_code] = current_row  # Store starting row of this type
+        type_start_rows[type_code] = current_row  # เก็บ row ที่เริ่มต้นของ type นี้
         current_row += 1
         
-        # Group data by component
+        # จัดกลุ่มข้อมูลตาม component
         data_by_component = {}
         for row_data in data_by_type[type_code]:
-            # Check row_data length and list_id_index
+            # ตรวจสอบความยาวของ row_data และ list_id_index
             if not isinstance(row_data, list) or len(row_data) <= list_id_index:
                 continue
                 
             list_id = str(row_data[list_id_index])
-            print(f"Debug: Processing component for list_id = {list_id}")
+            print(f"Debug: Processing component for list_id = {list_id}")  # Debug line
             if len(list_id) >= 5:
                 component_code = list_id[3:5]
-                print(f"Debug: component_code = {component_code}")
+                print(f"Debug: component_code = {component_code}")  # Debug line
                 if component_code in component_mapping:
                     if component_code not in data_by_component:
                         data_by_component[component_code] = []
                     data_by_component[component_code].append(row_data)
                 else:
-                    print(f"Debug: component_code {component_code} not found in mapping")
+                    print(f"Debug: component_code {component_code} not found in mapping")  # Debug line
         
-        # Loop through components in order and insert in column B next row after Type
+        # วนลูปตามลำดับ component และใส่ใน column B แถวถัดจาก Type
         for component_code in component_order:
             if component_code not in data_by_component or not data_by_component[component_code]:
                 continue
             
-            # Insert component group name in column B next row after Type
+            # ใส่ชื่อ component group ที่ column B แถวถัดจาก Type
             ws[f'B{current_row}'] = component_mapping[component_code]
             ws[f'B{current_row}'].font = Font(name="Calibri", size=10)
             ws[f'B{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
             current_row += 1
         
-        # If no matching component found, display all data
+        # ถ้าไม่มี component ที่ตรงกับที่กำหนด ให้แสดงข้อมูลทั้งหมด
         if not any(component_code in data_by_component for component_code in component_order):
-            # Insert all data in this type
+            # ใส่ข้อมูลทั้งหมดที่อยู่ใน type นี้
             for row_data in data_by_type[type_code]:
                 if not isinstance(row_data, list):
                     continue
                 
-                # Insert data in next row
+                # ใส่ข้อมูลในแถวถัดไป
                 if 'Component' in columns:
                     comp_idx = columns.index('Component')
                     if comp_idx < len(row_data):
@@ -365,7 +366,7 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'B{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'B{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
-                # Insert Description in column C
+                # ใส่ข้อมูล Description ใน column C
                 if 'Description' in columns:
                     desc_idx = columns.index('Description')
                     if desc_idx < len(row_data):
@@ -373,7 +374,7 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'C{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'C{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
                 
-                # Insert W in column D
+                # ใส่ข้อมูล W ใน column D
                 if 'W' in columns:
                     w_idx = columns.index('W')
                     if w_idx < len(row_data):
@@ -381,7 +382,7 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'D{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'D{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
                 
-                # Insert L in column E
+                # ใส่ข้อมูล L ใน column E
                 if 'L' in columns:
                     l_idx = columns.index('L')
                     if l_idx < len(row_data):
@@ -389,7 +390,7 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'E{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'E{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
                 
-                # Insert H in column F
+                # ใส่ข้อมูล H ใน column F
                 if 'H' in columns:
                     h_idx = columns.index('H')
                     if h_idx < len(row_data):
@@ -397,7 +398,7 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'F{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'F{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
                 
-                # Insert Quantity in column G
+                # ใส่ข้อมูล Quantity ใน column G
                 if 'Quantity' in columns:
                     qty_idx = columns.index('Quantity')
                     if qty_idx < len(row_data):
@@ -405,7 +406,7 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'G{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'G{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
                 
-                # Insert Unit in column H
+                # ใส่ข้อมูล Unit ใน column H
                 if 'Unit' in columns:
                     unit_idx = columns.index('Unit')
                     if unit_idx < len(row_data):
@@ -413,35 +414,35 @@ def insert_dynamic_data(wb, columns, rows):
                         ws[f'H{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'H{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
                 
-                # Insert price_per_unit in column I
+                # ใส่ข้อมูล price_per_unit ใน column I
                 if 'price_per_unit' in columns:
                     price_idx = columns.index('price_per_unit')
                     if price_idx < len(row_data):
                         ws[f'I{current_row}'] = row_data[price_idx]
                         ws[f'I{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'I{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
-                        # Add comma style for Unit Price
+                        # ใส่ comma style สำหรับ Unit Price
                         try:
                             if row_data[price_idx]:
                                 ws[f'I{current_row}'].number_format = '#,##0.00'
                         except:
                             pass
                 
-                # Insert total_cost in column J
+                # ใส่ข้อมูล total_cost ใน column J
                 if 'total_cost' in columns:
                     total_idx = columns.index('total_cost')
                     if total_idx < len(row_data):
                         ws[f'J{current_row}'] = row_data[total_idx]
                         ws[f'J{current_row}'].font = Font(name="Calibri", size=10)
                         ws[f'J{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
-                        # Add comma style for Amounts
+                        # ใส่ comma style สำหรับ Amounts
                         try:
                             if row_data[total_idx]:
                                 ws[f'J{current_row}'].number_format = '#,##0.00'
                         except:
                             pass
                 
-                # Insert remark in column K
+                # ใส่ข้อมูล remark ใน column K
                 if 'remark' in columns:
                     remark_idx = columns.index('remark')
                     if remark_idx < len(row_data):
@@ -451,76 +452,76 @@ def insert_dynamic_data(wb, columns, rows):
                 
                 current_row += 1
         
-        # Calculate TOTAL for this type
+        # คำนวณ TOTAL สำหรับ type นี้
         total_amount = 0
-        print(f"Debug: Calculating total for type {type_code}")
+        print(f"Debug: Calculating total for type {type_code}")  # Debug line
         for row_data in data_by_type[type_code]:
-            # Check row_data length
+            # ตรวจสอบความยาวของ row_data
             if not isinstance(row_data, list):
                 continue
                 
-            # Find total_cost index
+            # หา index ของ total_cost
             if 'total_cost' in columns:
                 total_cost_idx = columns.index('total_cost')
                 if total_cost_idx < len(row_data):
                     try:
                         amount = float(row_data[total_cost_idx]) if row_data[total_cost_idx] else 0
-                        print(f"Debug: Adding amount {amount} from total_cost")
+                        print(f"Debug: Adding amount {amount} from total_cost")  # Debug line
                         total_amount += amount
                     except (ValueError, TypeError):
-                        print(f"Debug: Error converting {row_data[total_cost_idx]} to float")
+                        print(f"Debug: Error converting {row_data[total_cost_idx]} to float")  # Debug line
                         continue
-        print(f"Debug: Total amount for type {type_code} = {total_amount}")
+        print(f"Debug: Total amount for type {type_code} = {total_amount}")  # Debug line
         
-        # Add this type's total to grand total
+        # เพิ่มผลรวมของ type นี้เข้าไปใน grand total
         grand_total += total_amount
         
-        # Insert TOTAL in column B
+        # ใส่ TOTAL ที่ column B
         ws[f'B{current_row}'] = "TOTAL"
         ws[f'B{current_row}'].font = Font(name="Calibri", size=10)
         ws[f'B{current_row}'].alignment = Alignment(horizontal='left', vertical='center')
         
-        # Insert total in column J
+        # ใส่ผลรวมที่ column J
         ws[f'J{current_row}'] = total_amount
         ws[f'J{current_row}'].font = Font(name="Calibri", size=10)
         ws[f'J{current_row}'].alignment = Alignment(horizontal='center', vertical='center')
-        # Add comma style for TOTAL Amounts
+        # ใส่ comma style สำหรับ TOTAL Amounts
         ws[f'J{current_row}'].number_format = '#,##0.00'
         
-        # Add background color #808080 to columns B:J in TOTAL row
+        # ใส่ background สี #808080 ให้กับ column B:J ในแถว TOTAL
         gray_fill = PatternFill(fill_type="solid", start_color="808080", end_color="808080")
         for col in range(2, 11):  # B=2, J=10
             cell = ws.cell(row=current_row, column=col)
             cell.fill = gray_fill
         
-        total_rows.append(current_row)  # Store TOTAL row
+        total_rows.append(current_row)  # เก็บ row ของ TOTAL
         current_row += 1
     
-    # Insert grand total in B8
+    # ใส่ผลรวมทั้งหมดใน B8
     ws['B8'] = grand_total
     ws['B8'].font = Font(name="Calibri", size=10, color="000000")  # black color
     ws['B8'].alignment = Alignment(horizontal='center', vertical='center')
-    # Add comma style for Grand Total
+    # ใส่ comma style สำหรับ Grand Total
     ws['B8'].number_format = '#,##0.00'
     
-    # Add borders as in the image - vertical lines by column and horizontal lines at end of total
+    # เพิ่ม borders แบบในรูป - เส้นตั้งตาม column และเส้นแนวนอนปิดท้าย total
     thin = Side(border_style="thin", color="000000")
     
     for type_code in type_order:
         if type_code in type_start_rows:
-            start_row = type_start_rows[type_code] - 1  # row with type name
+            start_row = type_start_rows[type_code] - 1  # row ที่มีชื่อ type
             
-            # Find correct end_row for this type
-            end_row = current_row - 1  # default to last row
+            # หา end_row ที่ถูกต้องสำหรับ type นี้
+            end_row = current_row - 1  # default เป็น row สุดท้าย
             for check_type in type_order:
                 if check_type == type_code:
                     break
                 if check_type in type_start_rows:
-                    end_row = type_start_rows[check_type] - 2  # row before next type
+                    end_row = type_start_rows[check_type] - 2  # row ก่อนหน้า type ถัดไป
             
-            # Add borders as in image
+            # ใส่ borders แบบในรูป
             for row in range(start_row, end_row + 1):
-                # Top row of type - top and vertical lines
+                # Top row ของ type - เส้นบนและเส้นตั้ง
                 if row == start_row:
                     for col in range(1, 12):  # A to K
                         cell = ws.cell(row=row, column=col)
@@ -531,7 +532,7 @@ def insert_dynamic_data(wb, columns, rows):
                         else:  # Column B-J
                             cell.border = Border(top=thin, right=thin)
                 
-                # Bottom row of type (TOTAL) - bottom and vertical lines
+                # Bottom row ของ type (TOTAL) - เส้นล่างและเส้นตั้ง
                 elif row == end_row:
                     for col in range(1, 12):  # A to K
                         cell = ws.cell(row=row, column=col)
@@ -542,7 +543,7 @@ def insert_dynamic_data(wb, columns, rows):
                         else:  # Column B-J
                             cell.border = Border(right=thin, bottom=thin)
                 
-                # Middle rows - only vertical lines
+                # Middle rows - เฉพาะเส้นตั้ง
                 else:
                     for col in range(1, 12):  # A to K
                         cell = ws.cell(row=row, column=col)
@@ -553,7 +554,7 @@ def insert_dynamic_data(wb, columns, rows):
                         else:  # Column B-J
                             cell.border = Border(right=thin)
     
-    # Add horizontal lines under all TOTAL rows
+    # เพิ่มเส้นแนวนอนใต้ row TOTAL ทั้งหมด
     for total_row in total_rows:
         for col in range(1, 12):  # A to K
             cell = ws.cell(row=total_row, column=col)
@@ -565,10 +566,10 @@ def insert_dynamic_data(wb, columns, rows):
                 bottom=thin
             )
     
-    # Add All borders to A11:K11 (table headers) - add at the end to ensure visibility
+    # เพิ่ม All borders ให้ A11:K11 (หัวตาราง) - ใส่ท้ายสุดเพื่อให้แน่ใจว่าจะแสดง
     for col in range(1, 12):  # A to K
         cell = ws.cell(row=11, column=col)
-        # Add All borders (top, left, right, bottom)
+        # ใส่ All borders (top, left, right, bottom)
         cell.border = Border(
             top=thin,
             left=thin,
@@ -577,38 +578,40 @@ def insert_dynamic_data(wb, columns, rows):
         )
 
 def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
-    # Configure your MinIO endpoints here
-    minio_internal_endpoint = "YOUR_INTERNAL_MINIO_ENDPOINT"
-    minio_public_endpoint = "YOUR_PUBLIC_MINIO_ENDPOINT"
+    # ✅ ภายใน Docker network → ใช้ชื่อ container
+    minio_internal_endpoint = "http://minio:9000"
+
+    # ✅ สำหรับสร้าง Public Presigned URL → ใช้ Host IP + พอร์ต
+    minio_public_endpoint = "http://100.81.135.35:9009"
 
     now = datetime.now().strftime("%Y%m%d-%H%M%S")
-    file_name = f"CostSheet-{now}.xlsx"
+    file_name = f"NCC-{now}.xlsx"
     object_key = f"excel-sheet/{file_name}"
 
-    # 1. Create Excel template
+    # 1. สร้าง Excel template
     wb = create_cost_sheet_template()
     
-    # 2. Add dynamic data
+    # 2. เพิ่มข้อมูลแบบ dynamic
     insert_dynamic_data(wb, columns, rows)
     
     object_key = f"excel-sheet/{file_name}"
 
-    # 2. Save file in memory
+    # 2. บันทึกไฟล์ใน memory
     excel_buffer = BytesIO()
     wb.save(excel_buffer)
     excel_buffer.seek(0)
 
-    # 3. Connect to MinIO
+    # 3. เชื่อมต่อ MinIO
     config = botocore.config.Config(connect_timeout=30, read_timeout=60)
     s3 = boto3.client(
         "s3",
-        endpoint_url=minio_internal_endpoint,
+        endpoint_url=minio_internal_endpoint,  # ✅ ใช้ endpoint ภายใน network ในการอัปโหลดไฟล์
         aws_access_key_id=minio_access_key,
         aws_secret_access_key=minio_secret_key,
         config=config
     )
 
-    # 4. Upload file
+    # 4. Upload ไฟล์
     excel_buffer.seek(0)
     s3.upload_fileobj(
         excel_buffer,
@@ -617,10 +620,10 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
         ExtraArgs={"ContentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
     )
 
-    # 5. Create public Presigned URL for others to download
+    # 5. สร้าง Presigned URL แบบ public ให้คนอื่นโหลดได้
     public_s3 = boto3.client(
         "s3",
-        endpoint_url=minio_public_endpoint,
+        endpoint_url=minio_public_endpoint,   # ✅ ใช้ Host endpoint เพื่อสร้าง Public URL
         aws_access_key_id=minio_access_key,
         aws_secret_access_key=minio_secret_key,
         config=config
@@ -634,17 +637,17 @@ def main(columns, rows, minio_access_key, minio_secret_key, bucket_name):
 
     return {"file_url": presigned_url}
 
-# Usage example
+# ตัวอย่างการใช้งาน
 if __name__ == "__main__":
-    # Sample data for demonstration
+    # ตัวอย่างข้อมูลสำหรับ Cost Sheet
     columns = ["list_id", "Project name", "Show day", "Place", "type", "Component", "Description", "W", "L", "H", "Unit", "Quantity", "price_per_unit", "total_cost", "remark"]
     rows = [
-        ["10001", "Sample Project", "2024-01-15", "Sample Location", "Structure", "Flooring", "Sample Material", "10", "5", "0.1", "m2", "50", "100", "5000", "Sample remark"],
-        ["10002", "Sample Project", "2024-01-15", "Sample Location", "Structure", "Main structure", "Sample Wall", "3", "2", "2.5", "m2", "6", "200", "1200", "Sample remark"],
-        ["10101", "Sample Project", "2024-01-15", "Sample Location", "Furniture", "Chair", "Sample Chair", "0.5", "0.5", "1", "pcs", "10", "500", "5000", "Sample remark"],
-        ["10201", "Sample Project", "2024-01-15", "Sample Location", "Graphic", "Banner", "Sample Banner", "2", "1", "0.1", "m2", "2", "150", "300", "Sample remark"]
+        ["10001", "Project A", "2024-01-15", "Bangkok", "Structure", "Flooring", "Carpet", "10", "5", "0.1", "m2", "50", "100", "5000", "High quality"],
+        ["10002", "Project A", "2024-01-15", "Bangkok", "Structure", "Main structure", "Wall", "3", "2", "2.5", "m2", "6", "200", "1200", "Standard"],
+        ["10101", "Project A", "2024-01-15", "Bangkok", "Furniture", "Chair", "Office chair", "0.5", "0.5", "1", "pcs", "10", "500", "5000", "Ergonomic"],
+        ["10201", "Project A", "2024-01-15", "Bangkok", "Graphic", "Banner", "Vinyl banner", "2", "1", "0.1", "m2", "2", "150", "300", "UV resistant"]
     ]
     
-    # Call function with your credentials
+    # เรียกใช้ฟังก์ชัน (ใส่ credentials จริง)
     # result = main(columns, rows, "your_access_key", "your_secret_key", "your_bucket")
     # print(result)
