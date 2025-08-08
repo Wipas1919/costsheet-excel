@@ -1,0 +1,42 @@
+EC - AI Cost Estimation System
+Internal Use License
+
+Copyright (c) 2024 [Company Name]
+
+This software and associated documentation files (the "Software") are the 
+confidential and proprietary information of [Company Name] ("Company").
+
+The Software is provided for internal use only by authorized employees of 
+the Company. No part of this Software may be reproduced, distributed, 
+transmitted, displayed, published, or broadcast without the prior written 
+permission of the Company.
+
+RESTRICTIONS:
+- This Software is for internal company use only
+- No external distribution or sharing is permitted
+- No reverse engineering or modification without authorization
+- All sensitive data and configurations must remain confidential
+- Access is limited to authorized personnel only
+
+SECURITY REQUIREMENTS:
+- All API keys and credentials must be kept secure
+- Database connections must use encrypted protocols
+- User authentication is required for all access
+- Audit logs must be maintained for all system usage
+- Regular security reviews must be conducted
+
+TERMINATION:
+This license automatically terminates if you fail to comply with any of 
+the terms and conditions of this license. Upon termination, you must 
+cease all use of the Software and destroy all copies.
+
+DISCLAIMER:
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+DEALINGS IN THE SOFTWARE.
+
+For questions regarding this license, please contact the development team. 

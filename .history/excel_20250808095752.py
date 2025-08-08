@@ -109,7 +109,7 @@ def process_ai_analyzed_data(columns, rows):
         for i, col in enumerate(columns):
             if i < len(row):
                 processed_row[col] = row[i]
-        else:
+            else:
                 processed_row[col] = '-'
         
         # Validate and process dimensions

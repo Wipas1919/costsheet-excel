@@ -23,3 +23,11 @@ Pillow>=10.0.0
 # Cloud storage (for production deployment)
 boto3>=1.26.0
 botocore>=1.29.0
+
+# Security and authentication
+cryptography>=41.0.0
+
+# Development and testing
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0 

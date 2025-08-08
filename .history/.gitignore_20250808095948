@@ -1,0 +1,101 @@
+# EC - AI Cost Estimation System
+# Git ignore file to protect sensitive information
+
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+# API Keys and credentials
+config_secrets.py
+secrets.json
+credentials.json
+api_keys.txt
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+logs/
+log/
+
+# Generated Excel files
+*.xlsx
+*.xls
+Cost_Sheet_*.xlsx
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Production data
+data/
+uploads/
+downloads/
+storage/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Sensitive company data
+company_data/
+internal_docs/
+price_lists/
+customer_data/
+
+# Windmill specific
+windmill_config.json
+windmill_secrets.yaml 
